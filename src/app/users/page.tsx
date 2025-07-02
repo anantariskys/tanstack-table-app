@@ -125,7 +125,7 @@ export default function Page() {
               Import CSV
             </Button>
             <Button color="blue" leftSection={<UserPlus size={16} />} onClick={open}>
-              Add Alumni
+              Add User
             </Button>
           </Group>
         </Group>
