@@ -3,7 +3,6 @@ import { faker } from "@faker-js/faker";
 
 export async function GET() {
   try {
-    // Generate 50 random users
     const users = Array.from({ length: 50 }, () => ({
       id: faker.string.uuid(),
       firstName: faker.person.firstName(),
