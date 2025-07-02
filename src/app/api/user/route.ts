@@ -3,7 +3,7 @@ import { faker } from "@faker-js/faker";
 
 export async function GET() {
   try {
-    const users = Array.from({ length: 50 }, () => ({
+    const users = Array.from({ length: 12 }, () => ({
       id: faker.string.uuid(),
       firstName: faker.person.firstName(),
       lastName: faker.person.lastName(),
