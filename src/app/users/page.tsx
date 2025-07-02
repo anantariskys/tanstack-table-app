@@ -30,11 +30,19 @@ import {
 } from "lucide-react";
 import { useDisclosure } from "@mantine/hooks";
 import { AddModal } from "@/components/users/AddModal";
+import { UpdateModal } from "@/components/users/UpdateModal";
 
 export default function Page() {
   const { data: users = [], isLoading, error } = useUsers();
-  const [opened, { open, close }] = useDisclosure(false);
-  const [value, setValue] = useState<string | null>(null);
+  const [addModalOpened, { open: openAddModal, close: closeAddModal }] = useDisclosure(false);
+  const [editModalOpened, { open: openEditModal, close: closeEditModal }] = useDisclosure(false);
+  const [selectedUser, setSelectedUser] = useState<User | null>(null);
+  const [statusFilter, setStatusFilter] = useState<string | null>(null);
+
+  const handleEdit = (user: User) => {
+    setSelectedUser(user);
+    openEditModal();
+  };
 
   const columns: ColumnDef<User>[] = [
     {
@@ -43,7 +51,7 @@ export default function Page() {
     },
     {
       accessorKey: "lastName",
-      header: "Last Name",
+      header: "Last Name", 
     },
     {
       accessorKey: "email",
@@ -73,9 +81,14 @@ export default function Page() {
     {
       accessorKey: "actions",
       header: "Actions",
-      cell: () => (
+      cell: ({ row }) => (
         <Group gap={4}>
-          <ActionIcon variant="subtle" color="blue" size="sm">
+          <ActionIcon 
+            variant="subtle" 
+            color="blue" 
+            size="sm"
+            onClick={() => handleEdit(row.original)}
+          >
             <Pencil size={16} />
           </ActionIcon>
           <ActionIcon variant="subtle" color="red" size="sm">
@@ -124,7 +137,7 @@ export default function Page() {
             >
               Import CSV
             </Button>
-            <Button color="blue" leftSection={<UserPlus size={16} />} onClick={open}>
+            <Button color="blue" leftSection={<UserPlus size={16} />} onClick={openAddModal}>
               Add User
             </Button>
           </Group>
@@ -137,8 +150,8 @@ export default function Page() {
           />
           <Select
             size="xs"
-            value={value}
-            onChange={setValue}
+            value={statusFilter}
+            onChange={setStatusFilter}
             data={["Active", "Inactive", "Pending"]}
             placeholder="Filter by status"
           />
@@ -159,7 +172,25 @@ export default function Page() {
         </Group>
         <ReusableTable data={users} columns={columns} />
       </Container>
-      <AddModal opened={opened} onClose={close} />
+      <AddModal opened={addModalOpened} onClose={closeAddModal} />
+      <UpdateModal 
+        opened={editModalOpened} 
+        onClose={closeEditModal} 
+        initialData={{
+          firstName: selectedUser?.firstName || "",
+          lastName: selectedUser?.lastName || "",
+          email: selectedUser?.email || "",
+          phone: selectedUser?.phone || "",
+          status: selectedUser?.status || "pending",
+          address: selectedUser?.address || "",
+          city: selectedUser?.city || "",
+          state: selectedUser?.state || "",
+          company: selectedUser?.company || "",
+          country: selectedUser?.country || "",
+          jobTitle: selectedUser?.jobTitle || "",
+
+        }} 
+      />
     </Fragment>
   );
 }
