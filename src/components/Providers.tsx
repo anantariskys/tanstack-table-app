@@ -10,11 +10,11 @@ export function Providers({ children }: PropsWithChildren) {
   const [queryClient] = useState(() => new QueryClient());
 
   return (
-    <MantineProvider >
+    <MantineProvider>
       <QueryClientProvider client={queryClient}>
         {children}
-      </QueryClientProvider>      
-      <Notifications />
+        <Notifications />
+      </QueryClientProvider>
     </MantineProvider>
   );
 }

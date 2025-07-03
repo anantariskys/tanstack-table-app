@@ -1,38 +1,23 @@
+import { Modal, TextInput, Button, Stack, Select, SimpleGrid, Group } from '@mantine/core';
+import { Controller, useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { UserFormData, userSchema } from '@/schemas/users/user';
 
-import {
-  Modal,
-  TextInput,
-  Button,
-  Stack,
-  Select,
-  SimpleGrid,
-  Group,
-} from "@mantine/core";
-import { Controller, useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { UserFormData, userSchema } from "@/schemas/users/user";
-
-export function AddModal({
-  opened,
-  onClose,
-}: {
-  opened: boolean;
-  onClose: () => void;
-}) {
+export function AddModal({ opened, onClose }: { opened: boolean; onClose: () => void }) {
   const form = useForm<UserFormData>({
     resolver: zodResolver(userSchema),
     defaultValues: {
-      firstName: "",
-      lastName: "",
-      email: "",
-      phone: "",
-      address: "",
-      city: "",
-      state: "",
-      country: "",
-      company: "",
-      jobTitle: "",
-      status: "pending",
+      firstName: '',
+      lastName: '',
+      email: '',
+      phone: '',
+      address: '',
+      city: '',
+      state: '',
+      country: '',
+      company: '',
+      jobTitle: '',
+      status: 'pending',
     },
   });
 
@@ -47,13 +32,7 @@ export function AddModal({
   };
 
   return (
-    <Modal
-      centered
-      opened={opened}
-      onClose={handleClose}
-      title="Add New User"
-      size="lg"
-    >
+    <Modal centered opened={opened} onClose={handleClose} title="Add New User" size="lg">
       <form onSubmit={form.handleSubmit(onSubmit)}>
         <Stack>
           <Group grow>
@@ -198,9 +177,9 @@ export function AddModal({
                 label="Status"
                 placeholder="Select status"
                 data={[
-                  { value: "active", label: "Active" },
-                  { value: "inactive", label: "Inactive" },
-                  { value: "pending", label: "Pending" },
+                  { value: 'active', label: 'Active' },
+                  { value: 'inactive', label: 'Inactive' },
+                  { value: 'pending', label: 'Pending' },
                 ]}
                 error={error?.message}
               />

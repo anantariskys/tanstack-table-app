@@ -1,16 +1,8 @@
-import {
-  Modal,
-  TextInput,
-  Button,
-  Stack,
-  Select,
-  SimpleGrid,
-  Group,
-} from "@mantine/core";
-import { Controller, useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { UserFormData, userSchema } from "@/schemas/users/user";
-import { useEffect } from "react";
+import { Modal, TextInput, Button, Stack, Select, SimpleGrid, Group } from '@mantine/core';
+import { Controller, useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { UserFormData, userSchema } from '@/schemas/users/user';
+import { useEffect } from 'react';
 
 export function UpdateModal({
   opened,
@@ -44,13 +36,7 @@ export function UpdateModal({
   };
 
   return (
-    <Modal
-      centered
-      opened={opened}
-      onClose={handleClose}
-      title="Update User"
-      size="lg"
-    >
+    <Modal centered opened={opened} onClose={handleClose} title="Update User" size="lg">
       <form onSubmit={form.handleSubmit(onSubmit)}>
         <Stack>
           <Group grow>
@@ -195,16 +181,15 @@ export function UpdateModal({
                 label="Status"
                 placeholder="Select status"
                 data={[
-                  { value: "active", label: "Active" },
-                  { value: "inactive", label: "Inactive" },
-                  { value: "pending", label: "Pending" },
+                  { value: 'active', label: 'Active' },
+                  { value: 'inactive', label: 'Inactive' },
+                  { value: 'pending', label: 'Pending' },
                 ]}
                 error={error?.message}
               />
             )}
           />
-            <Button type="submit">Update User</Button>
-         
+          <Button type="submit">Update User</Button>
         </Stack>
       </form>
     </Modal>

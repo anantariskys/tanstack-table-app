@@ -13,7 +13,7 @@ import { Table } from '@mantine/core';
 
 type ReusableTableProps<T> = {
   data: T[];
-  columns: ColumnDef<T, any>[]; 
+  columns: ColumnDef<T, any>[];
 };
 
 export function ReusableTable<T extends object>({ data, columns }: ReusableTableProps<T>) {
@@ -41,7 +41,7 @@ export function ReusableTable<T extends object>({ data, columns }: ReusableTable
                   onClick={header.column.getToggleSortingHandler()}
                   style={{
                     cursor: 'pointer',
-                    width, 
+                    width,
                   }}
                 >
                   {flexRender(header.column.columnDef.header, header.getContext())}

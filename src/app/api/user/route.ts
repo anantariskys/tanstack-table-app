@@ -1,5 +1,5 @@
-import { NextResponse } from "next/server";
-import { faker } from "@faker-js/faker";
+import { NextResponse } from 'next/server';
+import { faker } from '@faker-js/faker';
 
 export async function GET() {
   try {
@@ -17,20 +17,22 @@ export async function GET() {
       jobTitle: faker.person.jobTitle(),
       createdAt: faker.date.past(),
       avatar: faker.image.avatar(),
-      status: faker.helpers.arrayElement(['active', 'inactive', 'pending'])
+      status: faker.helpers.arrayElement(['active', 'inactive', 'pending']),
     }));
 
     return NextResponse.json({
       status: 200,
-      message: "Users fetched successfully", 
-      data: users
+      message: 'Users fetched successfully',
+      data: users,
     });
-    
   } catch (error) {
-    return NextResponse.json({
-      status: 500,
-      message: "Internal server error",
-      error: error instanceof Error ? error.message : "Unknown error occurred"
-    }, { status: 500 });
+    return NextResponse.json(
+      {
+        status: 500,
+        message: 'Internal server error',
+        error: error instanceof Error ? error.message : 'Unknown error occurred',
+      },
+      { status: 500 },
+    );
   }
 }
