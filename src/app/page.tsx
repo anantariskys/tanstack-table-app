@@ -1,7 +1,7 @@
 'use client';
 
 import { Container } from '@mantine/core';
-import { ReusableTable } from '@/components/ReusableTable'; 
+import { ReusableTable } from '@/components/ReusableTable';
 import { ColumnDef, createColumnHelper } from '@tanstack/react-table';
 
 type User = {
@@ -35,7 +35,6 @@ const columns: ColumnDef<User, any>[] = [
     meta: { width: '120px' },
   }),
 ];
-
 
 const data: User[] = [
   { id: 1, name: 'John Doe', email: 'john@example.com', role: 'Admin' },
