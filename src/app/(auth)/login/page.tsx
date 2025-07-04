@@ -1,4 +1,5 @@
 'use client';
+
 import { LoginPayload, loginSchema } from '@/schemas/auth/login';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
@@ -15,32 +16,80 @@ import {
 } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
 import { useForm, Controller } from 'react-hook-form';
+import { signIn } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
+import { useMutation } from '@tanstack/react-query';
+import { login } from '@/services/auth/login';
 
 export default function LoginPage() {
+  const [loading, setLoading] = useState(false);
   const form = useForm<LoginPayload>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
-      username: '',
+      email: '',
       password: '',
     },
   });
 
-  const onSubmit = (values: LoginPayload) => {
-    const randomBoolean = Math.random() < 0.5;
-    if (randomBoolean) {
+  const { mutate, isPending } = useMutation({
+    mutationFn: login,
+    onSuccess: (res) => {
       notifications.show({
         message: 'Login successful',
         color: 'green',
         autoClose: 1000,
       });
-    } else {
+      console.log(res);
+      router.push('/');
+    },
+    onError: (err) => {
       notifications.show({
-        message: 'Login failed',
+        message: 'Login failed: invalid credentials',
         color: 'red',
         autoClose: 1000,
       });
+      console.log(err);
+    },
+  });
+
+  const router = useRouter();
+
+  const onSubmit = async (values: LoginPayload) => {
+    try {
+      setLoading(true);
+      const res = await signIn('credentials', {
+        redirect: false,
+        email: values.email,
+        password: values.password,
+      });
+
+      if (!res?.error) {
+        notifications.show({
+          message: 'Login successful',
+          color: 'green',
+          autoClose: 1000,
+        });
+
+        console.log(res);
+
+        router.push('/');
+      } else {
+        notifications.show({
+          message: 'Login failed: invalid credentials',
+          color: 'red',
+          autoClose: 1000,
+        });
+      }
+    } catch (error) {
+      notifications.show({
+        message: 'An error occurred during login',
+        color: 'red',
+        autoClose: 1000,
+      });
+    } finally {
+      setLoading(false);
     }
-    console.log(values);
   };
 
   return (
@@ -59,7 +108,7 @@ export default function LoginPage() {
       <Paper withBorder shadow="md" p={30} mt={30} radius="md">
         <form onSubmit={form.handleSubmit(onSubmit)}>
           <Controller
-            name="username"
+            name="email"
             control={form.control}
             render={({ field, fieldState }) => (
               <TextInput
@@ -68,6 +117,7 @@ export default function LoginPage() {
                 radius="md"
                 size="md"
                 error={fieldState.error?.message}
+                disabled={loading}
                 {...field}
               />
             )}
@@ -83,12 +133,13 @@ export default function LoginPage() {
                 radius="md"
                 size="md"
                 error={fieldState.error?.message}
+                disabled={loading}
                 {...field}
               />
             )}
           />
           <Group justify="space-between" mt="lg">
-            <Checkbox label="Remember me" size="sm" />
+            <Checkbox label="Remember me" size="sm" disabled={loading} />
             <Anchor component="button" size="sm" fw={500}>
               Forgot password?
             </Anchor>
@@ -101,6 +152,7 @@ export default function LoginPage() {
             radius="md"
             variant="gradient"
             gradient={{ from: 'blue', to: 'cyan' }}
+            loading={loading}
           >
             Sign in
           </Button>

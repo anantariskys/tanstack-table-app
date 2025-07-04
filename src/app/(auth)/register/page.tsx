@@ -1,5 +1,6 @@
 'use client';
 import { RegisterPayload, registerSchema } from '@/schemas/auth/register';
+import { register } from '@/services/auth/register';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
   Anchor,
@@ -12,35 +13,43 @@ import {
   Title,
 } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
+import { useMutation } from '@tanstack/react-query';
+import { useRouter } from 'next/navigation';
 import { useForm, Controller } from 'react-hook-form';
 
 export default function RegisterPage() {
+  const router = useRouter();
   const form = useForm<RegisterPayload>({
     resolver: zodResolver(registerSchema),
     defaultValues: {
       username: '',
       password: '',
       email: '',
-      fullName: '',
+      name: '',
     },
   });
 
-  const onSubmit = (values: RegisterPayload) => {
-    const randomBoolean = Math.random() < 0.5;
-    if (randomBoolean) {
+  const { mutate, isPending } = useMutation({
+    mutationFn: register,
+    onSuccess: () => {
       notifications.show({
         message: 'Registration successful',
         color: 'green',
         autoClose: 1000,
       });
-    } else {
+      router.push('/login');
+    },
+    onError: () => {
       notifications.show({
         message: 'Registration failed',
         color: 'red',
         autoClose: 1000,
       });
-    }
-    console.log(values);
+    },
+  });
+
+  const onSubmit = (values: RegisterPayload) => {
+    mutate(values);
   };
 
   return (
@@ -49,7 +58,7 @@ export default function RegisterPage() {
         Create an account
       </Title>
 
-      <Text c="dimmed" size="sm" ta="center" mt={5}>
+      <Text c="dark" size="sm" ta="center" mt={5}>
         Already have an account?{' '}
         <Anchor size="sm" component="a" href="/login">
           Login
@@ -73,7 +82,7 @@ export default function RegisterPage() {
             )}
           />
           <Controller
-            name="fullName"
+            name="name"
             control={form.control}
             render={({ field, fieldState }) => (
               <TextInput
@@ -125,6 +134,7 @@ export default function RegisterPage() {
             radius="md"
             variant="gradient"
             gradient={{ from: 'blue', to: 'cyan' }}
+            loading={isPending}
           >
             Register
           </Button>
