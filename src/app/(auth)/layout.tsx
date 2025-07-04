@@ -1,4 +1,4 @@
-import { AppShell, Box, Container, Group, Stack, Title } from '@mantine/core';
+import { Box, Stack } from '@mantine/core';
 
 export const metadata = {
   title: 'Authentication',
