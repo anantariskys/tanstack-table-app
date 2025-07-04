@@ -29,6 +29,7 @@ import {
   Search,
   Moon,
 } from 'lucide-react';
+import { signOut } from 'next-auth/react';
 
 const navigationItems = [
   { label: 'Dashboard', icon: LayoutDashboard, link: '/' },
@@ -59,6 +60,10 @@ interface RootAppLayoutProps {
 export default function RootAppLayout({ children }: RootAppLayoutProps) {
   const [mobileOpened, { toggle: toggleMobile }] = useDisclosure();
   const [desktopOpened, { toggle: toggleDesktop }] = useDisclosure(true);
+
+  const handleLogout = async () => {
+    await signOut({ callbackUrl: '/login' });
+  };
 
   return (
     <AppShell
@@ -126,7 +131,12 @@ export default function RootAppLayout({ children }: RootAppLayoutProps) {
         </AppShell.Section>
 
         <AppShell.Section>
-          <Button variant="transparent" c="dark" leftSection={<LogOut size={18} />}>
+          <Button
+            variant="transparent"
+            c="dark"
+            leftSection={<LogOut size={18} />}
+            onClick={handleLogout}
+          >
             Log Out
           </Button>
         </AppShell.Section>
