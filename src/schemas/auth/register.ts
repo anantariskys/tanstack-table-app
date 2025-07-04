@@ -13,7 +13,7 @@ export const registerSchema = z.object({
       'Password must contain at least 1 uppercase letter, 1 lowercase letter, and 1 symbol',
     ),
   email: z.string().min(1, 'Email is required').email('Please enter a valid email address'),
-  fullName: z
+  name: z
     .string()
     .min(3, 'Full name must be at least 3 characters')
     .max(50, 'Full name must not exceed 50 characters'),
