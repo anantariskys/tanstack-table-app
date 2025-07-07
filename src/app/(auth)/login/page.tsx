@@ -112,12 +112,13 @@ export default function LoginPage() {
             control={form.control}
             render={({ field, fieldState }) => (
               <TextInput
-                label="Username"
-                placeholder="Your username"
+                label="Email"
+                placeholder="Your email"
                 radius="md"
                 size="md"
                 error={fieldState.error?.message}
                 disabled={loading}
+                type="email"
                 {...field}
               />
             )}
