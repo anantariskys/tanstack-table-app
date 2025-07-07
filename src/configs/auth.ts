@@ -16,13 +16,15 @@ export const authConfig = {
             email: email,
             password: password,
           });
-          console.log('Authorization response:', res);
 
           if (res.data.email && res.data.accessToken) {
+            const decodedToken = JSON.parse(atob(res.data.accessToken.split('.')[1]));
             return {
               email: res.data.email,
               accessToken: res.data.accessToken,
               refreshToken: res.data.refreshToken,
+              id: decodedToken.id,
+              restaurantId: decodedToken.restaurantId,
             };
           }
           return null;
@@ -37,6 +39,29 @@ export const authConfig = {
     signIn: '/login',
   },
   callbacks: {
+    async jwt({ token, user }) {
+      console.log('jwt callback', { token, user });
+      if (user) {
+        token.accessToken = user.accessToken;
+        token.refreshToken = user.refreshToken;
+        token.id = user.id;
+        token.restaurantId = user.restaurantId;
+      }
+      return token;
+    },
+    async session({ session, token }) {
+      console.log('session callback', { session, token });
+      const formatSession = {
+        ...session,
+        tokens: {
+          accessToken: token.accessToken,
+          refreshToken: token.refreshToken,
+        },
+        id: token.id,
+        restaurantId: token.restaurantId,
+      };
+      return formatSession;
+    },
     authorized({ auth, request: { nextUrl } }) {
       const isLoggedIn = !!auth?.user;
       const isPublicPath =
