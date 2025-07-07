@@ -28,11 +28,14 @@ import {
   LogOut,
   Search,
   Moon,
+  Boxes,
+  ForkKnifeCrossed,
 } from 'lucide-react';
 import { signOut } from 'next-auth/react';
-
 const navigationItems = [
   { label: 'Dashboard', icon: LayoutDashboard, link: '/' },
+  { label: 'Category', icon: Boxes, link: '/category' },
+  { label: 'Menu', icon: ForkKnifeCrossed, link: '/menu' },
   {
     label: 'Alumni',
     icon: GraduationCap,
