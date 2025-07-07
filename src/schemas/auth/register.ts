@@ -19,4 +19,6 @@ export const registerSchema = z.object({
     .max(50, 'Full name must not exceed 50 characters'),
 });
 
+// tidak perlu kapital di pass
+
 export type RegisterPayload = z.infer<typeof registerSchema>;
