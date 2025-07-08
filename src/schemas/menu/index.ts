@@ -34,5 +34,34 @@ export const createMenuSchema = menuSchema
       .refine((file) => file && file.size <= 2 * 1024 * 1024, 'Photo size must be less than 2MB'),
   });
 
+export const updateMenuSchema = menuSchema
+  .omit({
+    createdAt: true,
+    categories: true,
+    photoUrl: true,
+  })
+  .extend({
+    name: z.string().nonempty('Name is required'),
+    description: z.string().min(1, 'Description is required').nonempty('Description is required'),
+    price: z.number().min(1, 'Price is required'),
+    isAvailable: z.boolean().optional(),
+    categoryId: z.number().min(1, 'Category is required'),
+    restaurantId: z.number().min(1, 'Restaurant is required'),
+    photo: z
+      .instanceof(File)
+      .refine((file) => file && file.type.startsWith('image/'), 'File must be an image')
+      .refine((file) => file && file.size <= 2 * 1024 * 1024, 'Photo size must be less than 2MB')
+      .optional(),
+  })
+  .partial({
+    photo: true,
+  });
+
+export const deleteMenuSchema = menuSchema.pick({
+  id: true,
+});
+
 export type Menu = z.infer<typeof menuSchema>;
 export type CreateMenuPayload = z.infer<typeof createMenuSchema>;
+export type UpdateMenuPayload = z.infer<typeof updateMenuSchema>;
+export type DeleteMenuPayload = z.infer<typeof deleteMenuSchema>;
