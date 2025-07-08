@@ -11,14 +11,14 @@ export const menuSchema = z.object({
   categoryId: z.number(),
   restaurantId: z.number(),
   createdAt: z.string(),
-  categories: categorySchema,
+  category: categorySchema,
 });
 
 export const createMenuSchema = menuSchema
   .omit({
     id: true,
     createdAt: true,
-    categories: true,
+    category: true,
     photoUrl: true,
   })
   .extend({
@@ -37,7 +37,7 @@ export const createMenuSchema = menuSchema
 export const updateMenuSchema = menuSchema
   .omit({
     createdAt: true,
-    categories: true,
+    category: true,
     photoUrl: true,
   })
   .extend({
