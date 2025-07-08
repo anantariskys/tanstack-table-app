@@ -13,7 +13,7 @@ import { Table, Text, Center, Loader } from '@mantine/core';
 
 type ReusableTableProps<T> = {
   data: T[];
-  columns: ColumnDef<T, any>[];
+  columns: ColumnDef<T, unknown>[];
   isLoading?: boolean;
 };
 
