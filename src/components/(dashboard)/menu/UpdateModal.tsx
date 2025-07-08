@@ -7,20 +7,34 @@ import {
   FileInput,
   NumberInput,
   Textarea,
+  Radio,
 } from '@mantine/core';
 import { Controller, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { CreateMenuPayload, createMenuSchema } from '@/schemas/menu';
+import { UpdateMenuPayload, updateMenuSchema } from '@/schemas/menu';
 import { CategoryAutocomplete } from '../category/CategoryAutoComplete';
 import { useSession } from 'next-auth/react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { addMenus } from '@/services/menus/addMenus';
 import { notifications } from '@mantine/notifications';
+import { useEffect, useState } from 'react';
+import { updateMenus } from '@/services/menus/updateMenus';
+import Image from 'next/image';
 
-export function AddModal({ opened, onClose }: { opened: boolean; onClose: () => void }) {
+export function UpdateModal({
+  opened,
+  onClose,
+  initialData,
+  photoUrl,
+}: {
+  opened: boolean;
+  onClose: () => void;
+  initialData: UpdateMenuPayload;
+  photoUrl?: string;
+}) {
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const session = useSession();
-  const form = useForm<Omit<CreateMenuPayload, 'restaurantId'>>({
-    resolver: zodResolver(createMenuSchema.omit({ restaurantId: true })),
+  const form = useForm<Omit<UpdateMenuPayload, 'restaurantId'>>({
+    resolver: zodResolver(updateMenuSchema.omit({ restaurantId: true })),
     defaultValues: {
       name: '',
       description: '',
@@ -30,9 +44,19 @@ export function AddModal({ opened, onClose }: { opened: boolean; onClose: () => 
     },
   });
 
+  useEffect(() => {
+    if (opened) {
+      form.reset(initialData);
+      if (photoUrl) {
+        setPreviewUrl(photoUrl);
+      }
+      console.log('initialData', initialData);
+    }
+  }, [opened, initialData, form, photoUrl]);
+
   const queryClient = useQueryClient();
-  const { mutate } = useMutation({
-    mutationFn: addMenus,
+  const { mutate, isPending } = useMutation({
+    mutationFn: updateMenus,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['menus'] });
       notifications.show({
@@ -51,8 +75,8 @@ export function AddModal({ opened, onClose }: { opened: boolean; onClose: () => 
     },
   });
 
-  const onSubmit = (data: Omit<CreateMenuPayload, 'restaurantId'>) => {
-    mutate({ ...data, restaurantId: session?.data?.restaurantId || 0 });
+  const onSubmit = (data: Omit<UpdateMenuPayload, 'restaurantId'>) => {
+    mutate({ ...data, restaurantId: session.data?.restaurantId || 0 });
   };
 
   const handleClose = () => {
@@ -74,6 +98,7 @@ export function AddModal({ opened, onClose }: { opened: boolean; onClose: () => 
                   label="Menu Name"
                   placeholder="e.g. Spaghetti Carbonara"
                   error={error?.message}
+                  disabled={isPending}
                 />
               )}
             />
@@ -90,6 +115,7 @@ export function AddModal({ opened, onClose }: { opened: boolean; onClose: () => 
                   leftSection="Rp."
                   thousandSeparator
                   hideControls
+                  disabled={isPending}
                 />
               )}
             />
@@ -104,7 +130,25 @@ export function AddModal({ opened, onClose }: { opened: boolean; onClose: () => 
                 label="Description"
                 placeholder="Describe the menu item"
                 error={error?.message}
+                disabled={isPending}
               />
+            )}
+          />
+          <Controller
+            control={form.control}
+            name="isAvailable"
+            render={({ field, fieldState: { error } }) => (
+              <Radio.Group
+                label="Menu Availability"
+                value={field.value ? 'true' : 'false'}
+                onChange={(val) => field.onChange(val === 'true')}
+                error={error?.message}
+              >
+                <Group mt="xs">
+                  <Radio value="true" label="Available" disabled={isPending} />
+                  <Radio value="false" label="Not Available" disabled={isPending} />
+                </Group>
+              </Radio.Group>
             )}
           />
 
@@ -117,6 +161,7 @@ export function AddModal({ opened, onClose }: { opened: boolean; onClose: () => 
                   value={field.value}
                   onChange={field.onChange}
                   error={error?.message}
+                  disabled={isPending}
                 />
               )}
             />
@@ -126,17 +171,32 @@ export function AddModal({ opened, onClose }: { opened: boolean; onClose: () => 
             control={form.control}
             name="photo"
             render={({ field, fieldState: { error } }) => (
-              <FileInput
-                {...field}
-                label="Menu Photo"
-                placeholder="Upload menu image"
-                accept="image/*"
-                error={error?.message}
-              />
+              <Stack gap={4}>
+                {previewUrl && (
+                  <Image src={previewUrl} alt="Current menu photo" width={100} height={100} />
+                )}
+                <FileInput
+                  {...field}
+                  label="Menu Photo"
+                  placeholder="Upload menu image"
+                  accept="image/*"
+                  error={error?.message}
+                  disabled={isPending}
+                  onChange={(file) => {
+                    field.onChange(file);
+                    if (file) {
+                      const url = URL.createObjectURL(file);
+                      setPreviewUrl(url);
+                    }
+                  }}
+                />
+              </Stack>
             )}
           />
 
-          <Button type="submit">Add Menu</Button>
+          <Button type="submit" loading={isPending}>
+            Add Menu
+          </Button>
         </Stack>
       </form>
     </Modal>

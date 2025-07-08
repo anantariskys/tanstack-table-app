@@ -1,5 +1,5 @@
-import { DeleteCategoryPayload, deleteCategorySchema } from '@/schemas/categories';
-import { deleteCategories } from '@/services/categories/deleteCategories';
+import { DeleteMenuPayload, deleteMenuSchema } from '@/schemas/menu';
+import { deleteMenus } from '@/services/menus/deleteMenus';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Button, Group, Modal, Stack, Text } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
@@ -14,10 +14,10 @@ export function DeleteModal({
 }: {
   opened: boolean;
   onClose: () => void;
-  initialData: DeleteCategoryPayload;
+  initialData: DeleteMenuPayload;
 }) {
-  const form = useForm<DeleteCategoryPayload>({
-    resolver: zodResolver(deleteCategorySchema),
+  const form = useForm<DeleteMenuPayload>({
+    resolver: zodResolver(deleteMenuSchema),
     defaultValues: initialData,
   });
 
@@ -30,12 +30,12 @@ export function DeleteModal({
   const queryClient = useQueryClient();
 
   const { mutate, isPending } = useMutation({
-    mutationFn: deleteCategories,
+    mutationFn: deleteMenus,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['categories'] });
+      queryClient.invalidateQueries({ queryKey: ['menus'] });
       notifications.show({
         title: 'Success',
-        message: 'Category deleted successfully',
+        message: 'Menu deleted successfully',
         color: 'green',
       });
       handleClose();
@@ -59,7 +59,7 @@ export function DeleteModal({
   };
 
   return (
-    <Modal centered opened={opened} onClose={handleClose} title="Delete Category" size="md">
+    <Modal centered opened={opened} onClose={handleClose} title="Delete Menu" size="md">
       <Stack>
         {/* <Title>Delete Category</Title> */}
         <Text size="sm" c="dimmed">
