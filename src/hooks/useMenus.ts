@@ -1,11 +1,20 @@
 import { Menu } from '@/schemas/menu';
 import { getMenus } from '@/services/menus/getMenus';
+import { QueryParams } from '@/types/core/queryParams';
 import { PaginatedResponseType } from '@/types/core/response';
 import { useQuery } from '@tanstack/react-query';
 
-export function useMenus() {
+export function useMenus(params?: QueryParams) {
   return useQuery<PaginatedResponseType<Menu>>({
-    queryKey: ['menus'],
-    queryFn: getMenus,
+    queryKey: [
+      'menus',
+      {
+        ...params,
+      },
+    ],
+    queryFn: getMenus.bind(null, params),
+    // queryFn: () => {
+    //   return getMenus(params);
+    // }
   });
 }
