@@ -10,14 +10,13 @@ import {
   Group,
   Stack,
   Button,
-  LoadingOverlay,
   ActionIcon,
-  Menu,
   TextInput,
   Select,
+  Pagination,
 } from '@mantine/core';
 import { Fragment, useState } from 'react';
-import { FileUp, UserPlus, FileDown, Pencil, Trash, Settings, Search } from 'lucide-react';
+import { FileUp, UserPlus, FileDown, Pencil, Trash, Search } from 'lucide-react';
 import { useDisclosure } from '@mantine/hooks';
 
 import { useCategories } from '@/hooks/useCategories';
@@ -28,7 +27,10 @@ import { Category } from '@/schemas/categories';
 import { DeleteModal } from '@/components/(dashboard)/category/DeleteModal';
 
 export default function CategoryPage() {
-  const { data: categories, isLoading, error } = useCategories();
+  const [limit, setLimit] = useState(10);
+  const [page, setPage] = useState(1);
+  const [search, setSearch] = useState('');
+  const { data: categories, isLoading, error } = useCategories({ limit, page, search });
   const [addModalOpened, { open: openAddModal, close: closeAddModal }] = useDisclosure(false);
   const [editModalOpened, { open: openEditModal, close: closeEditModal }] = useDisclosure(false);
   const [deleteModalOpened, { open: openDeleteModal, close: closeDeleteModal }] =
@@ -112,35 +114,46 @@ export default function CategoryPage() {
             </Button>
           </Group>
         </Group>
-        <Group mb={16} justify="end">
-          <TextInput
-            size="xs"
-            leftSection={<Search size={16} />}
-            placeholder="Search in category table"
-          />
-          {/* <Select
-            size="xs"
-            value={statusFilter}
-            onChange={setStatusFilter}
-            data={['Active', 'Inactive', 'Pending']}
-            placeholder="Filter by status"
-          /> */}
-          <Button size="xs" rightSection={<FileDown size={16} />}>
-            Export Data
-          </Button>
-          <Menu withArrow position="bottom-end">
-            <Menu.Target>
-              <Button variant="light" color="gray" size="xs">
-                <Settings size={16} />
-              </Button>
-            </Menu.Target>
-            <Menu.Dropdown>
-              <Menu.Item>Edit</Menu.Item>
-              <Menu.Item>Delete</Menu.Item>
-            </Menu.Dropdown>
-          </Menu>
+        <Group mb={16} justify="space-between">
+          <Group>
+            <TextInput
+              size="xs"
+              leftSection={<Search size={16} />}
+              placeholder="Search in category table"
+              onChange={(e) => setSearch(e.target.value)}
+            />
+          </Group>
+
+          <Group>
+            <Select
+              size="xs"
+              w={120}
+              value={limit.toString()}
+              onChange={(value) => {
+                setLimit(Number(value));
+                setPage(1); // reset page ke 1 kalau limit berubah
+              }}
+              data={['1', '5', '10', '20', '50', '100']}
+              placeholder="Limit"
+            />
+
+            <Button size="xs" rightSection={<FileDown size={16} />}>
+              Export Data
+            </Button>
+          </Group>
         </Group>
+
         <ReusableTable isLoading={isLoading} data={categories?.data ?? []} columns={columns} />
+        <Group mt="md" justify="center">
+          {categories?.meta.totalPage && (
+            <Pagination
+              total={categories.meta.totalPage}
+              value={page}
+              onChange={setPage}
+              size="sm"
+            />
+          )}
+        </Group>
       </Container>
       <AddModal opened={addModalOpened} onClose={closeAddModal} />
       <UpdateModal
