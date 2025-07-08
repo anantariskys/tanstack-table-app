@@ -1,4 +1,3 @@
-import { LoginPayload } from '@/schemas/auth/login';
 import { RegisterPayload } from '@/schemas/auth/register';
 import { ResponseType } from '@/types/core/response';
 import { api } from '@/utils/axios';
