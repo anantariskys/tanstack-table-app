@@ -38,13 +38,14 @@ export default function MenuPage() {
     useDisclosure(false);
   const [selectedMenu, setSelectedMenu] = useState<Menu | null>(null);
 
-  const handleEdit = (category: Menu) => {
-    setSelectedMenu(category);
+  const handleEdit = (menu: Menu) => {
+    console.log(menu);
+    setSelectedMenu(menu);
     openEditModal();
   };
 
-  const handleDelete = (category: Menu) => {
-    setSelectedMenu(category);
+  const handleDelete = (menu: Menu) => {
+    setSelectedMenu(menu);
     openDeleteModal();
   };
 
@@ -65,6 +66,11 @@ export default function MenuPage() {
     {
       accessorKey: 'description',
       header: 'Description',
+    },
+    {
+      accessorKey: 'category',
+      header: 'Category',
+      accessorFn: (row) => row.category?.name?? '',
     },
     {
       accessorKey: 'price',
@@ -150,7 +156,7 @@ export default function MenuPage() {
             <TextInput
               size="xs"
               leftSection={<Search size={16} />}
-              placeholder="Search in category table"
+              placeholder="Search in menu table"
               onChange={(e) => setSearch(e.target.value)}
             />
           </Group>
@@ -188,7 +194,7 @@ export default function MenuPage() {
         opened={editModalOpened}
         onClose={closeEditModal}
         initialData={{
-          categoryId: selectedMenu?.categoryId ?? 0,
+          categoryId: selectedMenu?.category?.id ?? 0,
           name: selectedMenu?.name ?? '',
           description: selectedMenu?.description ?? '',
           price: selectedMenu?.price ?? 0,
