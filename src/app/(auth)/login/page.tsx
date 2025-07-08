@@ -19,8 +19,6 @@ import { useForm, Controller } from 'react-hook-form';
 import { signIn } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
-import { useMutation } from '@tanstack/react-query';
-import { login } from '@/services/auth/login';
 
 export default function LoginPage() {
   const [loading, setLoading] = useState(false);
@@ -29,27 +27,6 @@ export default function LoginPage() {
     defaultValues: {
       email: '',
       password: '',
-    },
-  });
-
-  const { mutate, isPending } = useMutation({
-    mutationFn: login,
-    onSuccess: (res) => {
-      notifications.show({
-        message: 'Login successful',
-        color: 'green',
-        autoClose: 1000,
-      });
-      console.log(res);
-      router.push('/');
-    },
-    onError: (err) => {
-      notifications.show({
-        message: 'Login failed: invalid credentials',
-        color: 'red',
-        autoClose: 1000,
-      });
-      console.log(err);
     },
   });
 
@@ -81,7 +58,8 @@ export default function LoginPage() {
           autoClose: 1000,
         });
       }
-    } catch (error) {
+    } catch (err) {
+      console.error(err);
       notifications.show({
         message: 'An error occurred during login',
         color: 'red',
