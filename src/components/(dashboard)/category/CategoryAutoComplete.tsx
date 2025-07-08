@@ -1,4 +1,3 @@
-// components/CategoryAutocomplete.tsx
 import { Autocomplete, Loader } from '@mantine/core';
 import { useEffect, useState } from 'react';
 import { getCategories } from '@/services/categories/getCategories';
@@ -23,19 +22,14 @@ export function CategoryAutocomplete({
 }: CategoryAutocompleteProps) {
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
-  const [selectedLabel, setSelectedLabel] = useState('');
   const [input, setInput] = useState('');
 
   useEffect(() => {
     const fetch = async () => {
       setLoading(true);
       try {
-        const res = await getCategories();
+        const res = await getCategories({ limit: 1000 });
         setCategories(res.data);
-
-        // Set selected label based on the value
-        const selected = res.data.find((cat) => cat.id === value);
-        if (selected) setSelectedLabel(selected.name || '');
       } catch (err) {
         console.error('Failed to fetch categories', err);
       } finally {
@@ -46,8 +40,19 @@ export function CategoryAutocomplete({
     fetch();
   }, []);
 
+  // Sync input label with value when categories or value change
+  useEffect(() => {
+    if (!value) return;
+
+    const selected = categories.find((cat) => cat.id === value);
+    if (selected && selected.name !== input) {
+      setInput(selected.name || '');
+    }
+  }, [value, categories, input]);
+
   const handleChange = (val: string) => {
     setInput(val);
+
     const match = categories.find((c) => c.name === val);
     if (match) {
       onChange(match.id);
@@ -61,7 +66,7 @@ export function CategoryAutocomplete({
       label={label}
       placeholder={placeholder}
       data={categories.map((cat) => cat.name || '')}
-      value={input || selectedLabel}
+      value={input}
       onChange={handleChange}
       error={error}
       disabled={disabled}
