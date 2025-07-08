@@ -1,4 +1,4 @@
-import { Category, DeleteCategoryPayload, UpdateCategoryPayload } from '@/schemas/categories';
+import { Category, DeleteCategoryPayload } from '@/schemas/categories';
 import { ResponseType } from '@/types/core/response';
 import { api } from '@/utils/axios';
 import { getSession } from 'next-auth/react';
