@@ -101,10 +101,7 @@ export default function RootAppLayout({ children }: RootAppLayoutProps) {
               </svg>
               <Stack gap={0}>
                 <Text c="blue" fw={700} fz="lg">
-                  Information
-                </Text>
-                <Text c="blue" fz="lg">
-                  Technology
+                  Depot 4
                 </Text>
               </Stack>
             </Group>
