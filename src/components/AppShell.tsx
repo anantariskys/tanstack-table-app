@@ -17,14 +17,8 @@ import {
 import { useDisclosure } from '@mantine/hooks';
 import {
   LayoutDashboard,
-  GraduationCap,
   Briefcase,
-  Calendar,
-  MessageSquare,
-  BookOpen,
-  FileBarChart,
   Users,
-  Settings,
   LogOut,
   Search,
   Moon,
@@ -36,24 +30,8 @@ const navigationItems = [
   { label: 'Dashboard', icon: LayoutDashboard, link: '/' },
   { label: 'Category', icon: Boxes, link: '/category' },
   { label: 'Menu', icon: ForkKnifeCrossed, link: '/menu' },
-  {
-    label: 'Alumni',
-    icon: GraduationCap,
-    initiallyOpened: true,
-    links: [
-      { label: 'Basic Info', link: '/alumni/basic' },
-      { label: 'Educational Info', link: '/alumni/education' },
-      { label: 'Professional Info', link: '/alumni/professional' },
-      { label: 'Engagement', link: '/alumni/engagement' },
-    ],
-  },
-  { label: 'Job', icon: Briefcase, link: '/job' },
-  { label: 'Event', icon: Calendar, link: '/event' },
-  { label: 'Forum', icon: MessageSquare, link: '/forum' },
-  { label: 'Resource', icon: BookOpen, link: '/resource' },
-  { label: 'Report', icon: FileBarChart, link: '/report' },
   { label: 'Users', icon: Users, link: '/users' },
-  { label: 'Setting', icon: Settings, link: '/settings' },
+  { label: 'Restaurant', icon: Briefcase, link: '/restaurant' },
 ];
 
 interface RootAppLayoutProps {
@@ -109,25 +87,17 @@ export default function RootAppLayout({ children }: RootAppLayoutProps) {
         </AppShell.Section>
 
         <AppShell.Section grow my="md" component={ScrollArea}>
-          {navigationItems.map((item) => (
-            <NavLink
-              key={item.label}
-              label={item.label}
-              leftSection={<item.icon size={16} />}
-              childrenOffset={28}
-              defaultOpened={item.initiallyOpened}
-              href={item.links ? '#' : item.link}
-            >
-              {item.links?.map((link) => (
-                <NavLink
-                  key={link.label}
-                  label={link.label}
-                  href={link.link}
-                  style={{ borderLeft: '0.5px solid #94a8d0' }}
-                />
-              ))}
-            </NavLink>
-          ))}
+          {navigationItems.map((item) => {
+            return (
+              <NavLink
+                key={item.label}
+                label={item.label}
+                leftSection={<item.icon size={16} />}
+                childrenOffset={28}
+                href={item.link}
+              ></NavLink>
+            );
+          })}
         </AppShell.Section>
 
         <AppShell.Section>
