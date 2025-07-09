@@ -1,7 +1,17 @@
-import { Modal, TextInput, Button, Stack, Select, SimpleGrid, Group } from '@mantine/core';
+import { Modal, TextInput, Button, Stack, Select, Group } from '@mantine/core';
 import { Controller, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { UserFormData, userSchema } from '@/schemas/users/user';
+import {
+  CreateUserPayload,
+  createUserSchema,
+  UpdateUserPayload,
+  updateUserSchema,
+  User,
+} from '@/schemas/users/user';
+import { useSession } from 'next-auth/react';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { notifications } from '@mantine/notifications';
+import { updateUser } from '@/services/user/updateUser';
 import { useEffect } from 'react';
 
 export function UpdateModal({
@@ -11,23 +21,50 @@ export function UpdateModal({
 }: {
   opened: boolean;
   onClose: () => void;
-  initialData: UserFormData;
+  initialData: UpdateUserPayload;
 }) {
-  const form = useForm<UserFormData>({
-    resolver: zodResolver(userSchema),
-    defaultValues: initialData,
+  const session = useSession();
+  const form = useForm<Omit<UpdateUserPayload, 'restaurantId'>>({
+    resolver: zodResolver(updateUserSchema.omit({ restaurantId: true })),
+    defaultValues: {
+      email: '',
+      name: '',
+      password: '',
+      username: '',
+    },
   });
 
   useEffect(() => {
     if (opened) {
       form.reset(initialData);
+      console.log('initialData', initialData);
     }
   }, [opened, initialData, form]);
 
-  const onSubmit = (data: UserFormData) => {
-    console.log(data);
+  const queryClient = useQueryClient();
+  const { mutate, isPending } = useMutation({
+    mutationFn: updateUser,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['user'] });
+      notifications.show({
+        message: 'User updated successfully',
+        color: 'green',
+        autoClose: 1000,
+      });
+      handleClose();
+    },
+    onError: (error) => {
+      notifications.show({
+        message: 'Something went wrong',
+        color: 'red',
+        autoClose: 1000,
+      });
+      console.log(error);
+    },
+  });
 
-    handleClose();
+  const onSubmit = (data: Omit<UpdateUserPayload, 'restaurantId'>) => {
+    mutate({ ...data, restaurantId: session?.data?.restaurantId || 0 });
   };
 
   const handleClose = () => {
@@ -36,31 +73,33 @@ export function UpdateModal({
   };
 
   return (
-    <Modal centered opened={opened} onClose={handleClose} title="Update User" size="lg">
+    <Modal centered opened={opened} onClose={handleClose} title="Add New User" size="lg">
       <form onSubmit={form.handleSubmit(onSubmit)}>
-        <Stack>
+        <Stack gap={'md'}>
           <Group grow>
             <Controller
               control={form.control}
-              name="firstName"
+              name="name"
               render={({ field, fieldState: { error } }) => (
                 <TextInput
                   {...field}
-                  label="First Name"
-                  placeholder="Enter first name"
+                  label="Name"
+                  placeholder="Enter name"
                   error={error?.message}
+                  disabled={isPending}
                 />
               )}
             />
             <Controller
               control={form.control}
-              name="lastName"
+              name="username"
               render={({ field, fieldState: { error } }) => (
                 <TextInput
                   {...field}
-                  label="Last Name"
-                  placeholder="Enter last name"
+                  label="Username"
+                  placeholder="Enter username"
                   error={error?.message}
+                  disabled={isPending}
                 />
               )}
             />
@@ -76,18 +115,21 @@ export function UpdateModal({
                   label="Email"
                   placeholder="Enter email"
                   error={error?.message}
+                  disabled={isPending}
                 />
               )}
             />
             <Controller
               control={form.control}
-              name="phone"
+              name="password"
               render={({ field, fieldState: { error } }) => (
                 <TextInput
                   {...field}
-                  label="Phone"
-                  placeholder="Enter phone number"
+                  type="password"
+                  label="Password"
+                  placeholder="Enter password"
                   error={error?.message}
+                  disabled={isPending}
                 />
               )}
             />
@@ -95,101 +137,30 @@ export function UpdateModal({
 
           <Controller
             control={form.control}
-            name="address"
-            render={({ field, fieldState: { error } }) => (
-              <TextInput
-                {...field}
-                label="Address"
-                placeholder="Enter address"
-                error={error?.message}
-              />
-            )}
-          />
-          <SimpleGrid cols={3}>
-            <Controller
-              control={form.control}
-              name="city"
-              render={({ field, fieldState: { error } }) => (
-                <TextInput
-                  {...field}
-                  label="City"
-                  placeholder="Enter city"
-                  error={error?.message}
-                />
-              )}
-            />
-            <Controller
-              control={form.control}
-              name="state"
-              render={({ field, fieldState: { error } }) => (
-                <TextInput
-                  {...field}
-                  label="State"
-                  placeholder="Enter state"
-                  error={error?.message}
-                />
-              )}
-            />
-            <Controller
-              control={form.control}
-              name="country"
-              render={({ field, fieldState: { error } }) => (
-                <TextInput
-                  {...field}
-                  label="Country"
-                  placeholder="Enter country"
-                  error={error?.message}
-                />
-              )}
-            />
-          </SimpleGrid>
-
-          {/* Employment Information Group */}
-          <Group grow>
-            <Controller
-              control={form.control}
-              name="company"
-              render={({ field, fieldState: { error } }) => (
-                <TextInput
-                  {...field}
-                  label="Company"
-                  placeholder="Enter company name"
-                  error={error?.message}
-                />
-              )}
-            />
-            <Controller
-              control={form.control}
-              name="jobTitle"
-              render={({ field, fieldState: { error } }) => (
-                <TextInput
-                  {...field}
-                  label="Job Title"
-                  placeholder="Enter job title"
-                  error={error?.message}
-                />
-              )}
-            />
-          </Group>
-
-          <Controller
-            control={form.control}
-            name="status"
+            name="role"
             render={({ field, fieldState: { error } }) => (
               <Select
                 {...field}
-                label="Status"
-                placeholder="Select status"
+                label="Role"
+                placeholder="Select role"
                 data={[
-                  { value: 'active', label: 'Active' },
-                  { value: 'inactive', label: 'Inactive' },
-                  { value: 'pending', label: 'Pending' },
+                  { value: 'owner', label: 'Owner' },
+                  { value: 'manager', label: 'Manager' },
+                  { value: 'staff', label: 'Staff' },
                 ]}
                 error={error?.message}
+                disabled={isPending}
               />
             )}
           />
-          <Button type="submit">Update User</Button>
+          <Group justify="end" mt="md">
+            <Button variant="subtle" onClick={handleClose} disabled={isPending}>
+              Cancel
+            </Button>
+            <Button type="submit" loading={isPending}>
+              Add User
+            </Button>
+          </Group>
         </Stack>
       </form>
     </Modal>
