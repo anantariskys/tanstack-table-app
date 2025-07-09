@@ -6,9 +6,8 @@ export const loginSchema = z.object({
     .string()
     .min(6, 'Password must be at least 6 characters')
     .regex(
-      /^(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*(),.?":{}|<>]).*$/,
-      'Password must contain at least 1 uppercase letter, 1 lowercase letter, and 1 symbol',
+      /^(?=.*\d)(?=.*[!@#$%^&*(),.?":{}|<>])[A-Za-z\d!@#$%^&*(),.?":{}|<>]{6,}$/,
+      'Password must contain at least 1 number and 1 symbol',
     ),
 });
-// tidak perlu kapital
 export type LoginPayload = z.infer<typeof loginSchema>;

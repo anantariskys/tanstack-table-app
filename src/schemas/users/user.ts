@@ -1,17 +1,34 @@
 import { z } from 'zod';
 
 export const userSchema = z.object({
-  firstName: z.string().min(1, 'First name is required'),
-  lastName: z.string().min(1, 'Last name is required'),
+  id: z.number(),
+  createdAt: z.string().datetime(),
+  username: z.string().min(1, 'Username is required'),
   email: z.string().email('Invalid email address'),
-  phone: z.string().min(1, 'Phone number is required'),
-  address: z.string().min(1, 'Address is required'),
-  city: z.string().min(1, 'City is required'),
-  state: z.string().min(1, 'State is required'),
-  country: z.string().min(1, 'Country is required'),
-  company: z.string().min(1, 'Company is required'),
-  jobTitle: z.string().min(1, 'Job title is required'),
-  status: z.enum(['active', 'inactive', 'pending']),
+  role: z.enum(['owner', 'manager', 'staff']),
 });
 
-export type UserFormData = z.infer<typeof userSchema>;
+export const createUserSchema = userSchema
+  .omit({
+    id: true,
+    createdAt: true,
+  })
+  .extend({
+    name: z.string().min(1, 'Name is required'),
+    restaurantId: z.number().min(1, 'Restaurant ID is required'),
+    password: z
+      .string()
+      .min(6, 'Password must be at least 6 characters')
+      .regex(
+        /^(?=.*\d)(?=.*[!@#$%^&*(),.?":{}|<>])[A-Za-z\d!@#$%^&*(),.?":{}|<>]{6,}$/,
+        'Password must contain at least 1 number and 1 symbol',
+      ),
+  });
+
+export const updateUserSchema = createUserSchema.extend({
+  id: z.number(),
+});
+
+export type User = z.infer<typeof userSchema>;
+export type CreateUserPayload = z.infer<typeof createUserSchema>;
+export type UpdateUserPayload = z.infer<typeof updateUserSchema>;
