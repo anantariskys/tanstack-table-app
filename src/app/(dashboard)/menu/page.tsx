@@ -70,7 +70,7 @@ export default function MenuPage() {
     {
       accessorKey: 'category',
       header: 'Category',
-      accessorFn: (row) => row.category?.name?? '',
+      accessorFn: (row) => row.category?.name ?? '',
     },
     {
       accessorKey: 'price',

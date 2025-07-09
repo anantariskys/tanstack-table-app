@@ -1,74 +1,69 @@
 'use client';
 
-import { useUsers, User } from '@/hooks/useUsers';
-import { ReusableTable } from '@/components/ReusableTable';
-import { ColumnDef } from '@tanstack/react-table';
-import {
-  Badge,
-  Container,
-  Title,
-  Center,
-  Text,
-  Group,
-  Stack,
-  Button,
-  TextInput,
-  Select,
-  LoadingOverlay,
-  ActionIcon,
-  Menu,
-} from '@mantine/core';
-import { Fragment, useState } from 'react';
-import { Search, FileUp, UserPlus, FileDown, Pencil, Trash, Settings } from 'lucide-react';
-import { useDisclosure } from '@mantine/hooks';
 import { AddModal } from '@/components/(dashboard)/users/AddModal';
 import { UpdateModal } from '@/components/(dashboard)/users/UpdateModal';
+import { ReusableTable } from '@/components/ReusableTable';
+import { useUser } from '@/hooks/useUsers';
+import { User } from '@/schemas/users/user';
+import { moment } from '@/utils/moment';
+import {
+  ActionIcon,
+  Button,
+  Center,
+  Container,
+  Group,
+  Select,
+  Stack,
+  Text,
+  TextInput,
+  Title,
+  Pagination,
+} from '@mantine/core';
+import { useDisclosure } from '@mantine/hooks';
+import { ColumnDef } from '@tanstack/react-table';
+import { FileDown, FileUp, Pencil, Search, Trash, UserPlus } from 'lucide-react';
+import { Fragment, useState } from 'react';
 
-export default function Page() {
-  const { data: users = [], isLoading, error } = useUsers();
+export default function MenuPage() {
+  const [limit, setLimit] = useState(10);
+  const [page, setPage] = useState(1);
+  const [search, setSearch] = useState('');
+  const { data: users, isLoading, error } = useUser({ limit, page, search });
   const [addModalOpened, { open: openAddModal, close: closeAddModal }] = useDisclosure(false);
   const [editModalOpened, { open: openEditModal, close: closeEditModal }] = useDisclosure(false);
+  const [deleteModalOpened, { open: openDeleteModal, close: closeDeleteModal }] =
+    useDisclosure(false);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
-  const [statusFilter, setStatusFilter] = useState<string | null>(null);
 
   const handleEdit = (user: User) => {
+    console.log(user);
     setSelectedUser(user);
     openEditModal();
   };
 
+  const handleDelete = (user: User) => {
+    setSelectedUser(user);
+    openDeleteModal();
+  };
+
   const columns: ColumnDef<User>[] = [
     {
-      accessorKey: 'firstName',
-      header: 'First Name',
-    },
-    {
-      accessorKey: 'lastName',
-      header: 'Last Name',
+      accessorKey: 'username',
+      header: 'Username',
     },
     {
       accessorKey: 'email',
       header: 'Email',
     },
     {
-      accessorKey: 'phone',
-      header: 'Phone',
+      accessorKey: 'role',
+      header: 'Role',
+      accessorFn: (row) => row.role,
     },
     {
-      accessorKey: 'status',
-      header: 'Status',
-      cell: (row) => {
-        const status = row.getValue<string>();
-        const colorMap: Record<string, string> = {
-          active: 'green',
-          inactive: 'red',
-          pending: 'yellow',
-        };
-        return (
-          <Badge color={colorMap[status] || 'blue'} variant="light">
-            {status.toLowerCase()}
-          </Badge>
-        );
-      },
+      accessorKey: 'createdAt',
+      header: 'Created At',
+      accessorFn: (row) => moment(row.createdAt).format('MMMM D, YYYY'),
     },
     {
       accessorKey: 'actions',
@@ -78,12 +73,17 @@ export default function Page() {
           <ActionIcon
             variant="subtle"
             color="blue"
-            size="sm"
             onClick={() => handleEdit(row.original)}
+            size="sm"
           >
             <Pencil size={16} />
           </ActionIcon>
-          <ActionIcon variant="subtle" color="red" size="sm">
+          <ActionIcon
+            variant="subtle"
+            color="red"
+            size="sm"
+            onClick={() => handleDelete(row.original)}
+          >
             <Trash size={16} />
           </ActionIcon>
         </Group>
@@ -91,21 +91,10 @@ export default function Page() {
     },
   ];
 
-  if (isLoading) {
-    return (
-      <Center>
-        <LoadingOverlay
-          visible={true}
-          overlayProps={{ radius: 'sm', blur: 1, opacity: 0.5, bg: 'dark' }}
-        />
-      </Center>
-    );
-  }
-
   if (error) {
     return (
       <Center>
-        <Text color="red">Error loading users.</Text>
+        <Text color="red">Error loading user.</Text>
       </Center>
     );
   }
@@ -117,7 +106,7 @@ export default function Page() {
           <Stack gap={0}>
             <Text>Manage</Text>
             <Title order={2} mb="md">
-              Users Information
+              User
             </Title>
           </Stack>
           <Group>
@@ -129,54 +118,64 @@ export default function Page() {
             </Button>
           </Group>
         </Group>
-        <Group mb={16} justify="end">
-          <TextInput
-            size="xs"
-            leftSection={<Search size={16} />}
-            placeholder="Search in user table"
-          />
-          <Select
-            size="xs"
-            value={statusFilter}
-            onChange={setStatusFilter}
-            data={['Active', 'Inactive', 'Pending']}
-            placeholder="Filter by status"
-          />
-          <Button size="xs" rightSection={<FileDown size={16} />}>
-            Export Data
-          </Button>
-          <Menu withArrow position="bottom-end">
-            <Menu.Target>
-              <Button variant="light" color="gray" size="xs">
-                <Settings size={16} />
-              </Button>
-            </Menu.Target>
-            <Menu.Dropdown>
-              <Menu.Item>Edit</Menu.Item>
-              <Menu.Item>Delete</Menu.Item>
-            </Menu.Dropdown>
-          </Menu>
+
+        <Group mb={16} justify="space-between">
+          <Group>
+            <TextInput
+              size="xs"
+              leftSection={<Search size={16} />}
+              placeholder="Search in menu table"
+              onChange={(e) => setSearch(e.target.value)}
+            />
+          </Group>
+
+          <Group>
+            <Select
+              size="xs"
+              w={120}
+              value={limit.toString()}
+              onChange={(value) => {
+                setLimit(Number(value));
+                setPage(1);
+              }}
+              data={['1', '5', '10', '20', '50', '100']}
+              placeholder="Limit"
+            />
+
+            <Button size="xs" rightSection={<FileDown size={16} />}>
+              Export Data
+            </Button>
+          </Group>
         </Group>
-        <ReusableTable data={users} columns={columns} />
+
+        <ReusableTable isLoading={isLoading} data={users?.data ?? []} columns={columns} />
+
+        <Group mt="md" justify="center">
+          {users?.meta.totalPage && (
+            <Pagination total={users.meta.totalPage} value={page} onChange={setPage} size="sm" />
+          )}
+        </Group>
       </Container>
+
       <AddModal opened={addModalOpened} onClose={closeAddModal} />
       <UpdateModal
         opened={editModalOpened}
         onClose={closeEditModal}
         initialData={{
-          firstName: selectedUser?.firstName || '',
-          lastName: selectedUser?.lastName || '',
+          id: selectedUser?.id || 0,
+          name: '',
           email: selectedUser?.email || '',
-          phone: selectedUser?.phone || '',
-          status: selectedUser?.status || 'pending',
-          address: selectedUser?.address || '',
-          city: selectedUser?.city || '',
-          state: selectedUser?.state || '',
-          company: selectedUser?.company || '',
-          country: selectedUser?.country || '',
-          jobTitle: selectedUser?.jobTitle || '',
+          username: selectedUser?.username || '',
+          role: selectedUser?.role || 'owner',
+          password: '',
+          restaurantId: 0,
         }}
       />
+      {/* <DeleteModal
+        onClose={closeDeleteModal}
+        opened={deleteModalOpened}
+        initialData={{ id: selectedMenu?.id ?? 0 }}
+      /> */}
     </Fragment>
   );
 }
