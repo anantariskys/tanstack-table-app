@@ -1,30 +1,17 @@
+import { User } from '@/schemas/users/user';
+import { getUser } from '@/services/user/getUser';
+import { QueryParams } from '@/types/core/queryParams';
+import { PaginatedResponseType } from '@/types/core/response';
 import { useQuery } from '@tanstack/react-query';
 
-export type User = {
-  id: string;
-  firstName: string;
-  lastName: string;
-  email: string;
-  phone: string;
-  address: string;
-  city: string;
-  state: string;
-  country: string;
-  company: string;
-  jobTitle: string;
-  createdAt: string;
-  avatar: string;
-  status: 'active' | 'inactive' | 'pending';
-};
-
-export function useUsers() {
-  return useQuery<User[]>({
-    queryKey: ['users'],
-    queryFn: async () => {
-      const res = await fetch('/api/user');
-      const json = await res.json();
-      if (!res.ok) throw new Error(json.message || 'Failed to fetch users');
-      return json.data;
-    },
+export function useUser(params?: QueryParams) {
+  return useQuery<PaginatedResponseType<User>>({
+    queryKey: [
+      'user',
+      {
+        ...params,
+      },
+    ],
+    queryFn: getUser.bind(null, params),
   });
 }
