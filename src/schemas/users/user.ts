@@ -29,6 +29,11 @@ export const updateUserSchema = createUserSchema.extend({
   id: z.number(),
 });
 
+export const deleteUserSchema = userSchema.pick({
+  id: true,
+});
+
 export type User = z.infer<typeof userSchema>;
 export type CreateUserPayload = z.infer<typeof createUserSchema>;
 export type UpdateUserPayload = z.infer<typeof updateUserSchema>;
+export type DeleteUserPayload = z.infer<typeof deleteUserSchema>;
