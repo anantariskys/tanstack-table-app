@@ -11,6 +11,8 @@ export async function addMenus(payload: CreateMenuPayload): Promise<ResponseType
   if (payload.photo instanceof File) {
     const uploadRes = await postStorage({ photo: payload.photo });
 
+    console.log('UPLOADED FOTO', uploadRes);
+
     if (!uploadRes.data?.url) {
       throw new Error('Upload failed');
     }

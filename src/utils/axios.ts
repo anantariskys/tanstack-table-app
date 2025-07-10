@@ -5,7 +5,10 @@ export const api = axios.create({
 });
 
 api.interceptors.response.use(
-  (response) => response,
+  (response) => {
+    console.log('testttttttttttttttttttt');
+    return response;
+  },
   (error) => {
     if (
       error.response &&
