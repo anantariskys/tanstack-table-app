@@ -8,7 +8,7 @@ export const metadata = {
 export default function AuthLayout({ children }: { children: React.ReactNode }) {
   return (
     <Box w="100%" h="100vh" p={0}>
-      <Stack gap={4} justify="center" h={'100%'} align="center">
+      <Stack gap={4} justify="center" h={'100%'} w="100%" align="center">
         <svg
           width="50"
           height="50"
