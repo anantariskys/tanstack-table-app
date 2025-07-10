@@ -1,71 +1,68 @@
 'use client';
 
+import { AddModal } from '@/components/(dashboard)/users/AddModal';
+import { DeleteModal } from '@/components/(dashboard)/users/DeleteModal';
+import { UpdateModal } from '@/components/(dashboard)/users/UpdateModal';
 import { ReusableTable } from '@/components/ReusableTable';
+import { useRestaurant } from '@/hooks/useRestaurant';
+import { Restaurant } from '@/schemas/restaurant';
+import { moment } from '@/utils/moment';
+import {
+  ActionIcon,
+  Button,
+  Center,
+  Container,
+  Group,
+  Select,
+  Stack,
+  Text,
+  TextInput,
+  Title,
+  Pagination,
+  Box,
+  Card,
+  Tooltip,
+  Badge,
+  Paper,
+} from '@mantine/core';
+import { useDisclosure } from '@mantine/hooks';
 import { ColumnDef } from '@tanstack/react-table';
 import {
-  Container,
-  Title,
-  Center,
-  Text,
-  Group,
-  Stack,
-  Button,
-  ActionIcon,
-  TextInput,
-  Select,
-  Pagination,
-  Card,
-  Badge,
-  Tooltip,
-  Paper,
-  Box,
-  Flex,
-} from '@mantine/core';
-import { Fragment, useState } from 'react';
-import {
-  FileUp,
-  UserPlus,
-  FileDown,
-  Pencil,
-  Trash,
-  Search,
-  Filter,
-  RefreshCw,
-  TrendingUp,
-  Calendar,
-  Tag,
-  MoreHorizontal,
-  Eye,
   Archive,
+  Calendar,
+  Eye,
+  FileDown,
+  FileUp,
+  Filter,
+  Pencil,
+  RefreshCw,
+  Search,
+  Store,
+  Tag,
+  Trash,
 } from 'lucide-react';
-import { useDisclosure } from '@mantine/hooks';
+import { Fragment, useState } from 'react';
 
-import { useCategories } from '@/hooks/useCategories';
-import { AddModal } from '@/components/(dashboard)/category/AddModal';
-import moment from 'moment';
-import { UpdateModal } from '@/components/(dashboard)/category/UpdateModal';
-import { Category } from '@/schemas/categories';
-import { DeleteModal } from '@/components/(dashboard)/category/DeleteModal';
-
-export default function CategoryPage() {
+export default function RestaurantPage() {
   const [limit, setLimit] = useState(10);
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState('');
   const [isRefreshing, setIsRefreshing] = useState(false);
-  const { data: categories, isLoading, error } = useCategories({ limit, page, search });
+  const { data: restaurants, isLoading, error } = useRestaurant({ limit, page, search });
   const [addModalOpened, { open: openAddModal, close: closeAddModal }] = useDisclosure(false);
   const [editModalOpened, { open: openEditModal, close: closeEditModal }] = useDisclosure(false);
   const [deleteModalOpened, { open: openDeleteModal, close: closeDeleteModal }] =
     useDisclosure(false);
-  const [selectedCategory, setSelectedCategory] = useState<Category | null>(null);
+  const [selectedRestaurant, setSelectedRestaurant] = useState<Restaurant | null>(null);
 
-  const handleEdit = (category: Category) => {
-    setSelectedCategory(category);
+  const handleEdit = (restaurant: Restaurant) => {
+    console.log(restaurant);
+    setSelectedRestaurant(restaurant);
     openEditModal();
   };
 
-  const handleDelete = (category: Category) => {
-    setSelectedCategory(category);
+  const handleDelete = (restaurant: Restaurant) => {
+    setSelectedRestaurant(restaurant);
     openDeleteModal();
   };
 
@@ -76,25 +73,22 @@ export default function CategoryPage() {
     }, 1000);
   };
 
-  const columns: ColumnDef<Category>[] = [
+  const columns: ColumnDef<Restaurant>[] = [
     {
       accessorKey: 'name',
-      header: 'Category Name',
-      cell: ({ row }) => (
-        <Group gap="sm">
-          <Box
-            style={{
-              width: '8px',
-              height: '8px',
-              borderRadius: '50%',
-              backgroundColor: `hsl(${(row.index * 137.5) % 360}, 70%, 50%)`,
-            }}
-          />
-          <Text fw={500} c="dark.7">
-            {row.original.name}
-          </Text>
-        </Group>
-      ),
+      header: 'Name',
+    },
+    {
+      accessorKey: 'description',
+      header: 'Description',
+    },
+    {
+      accessorKey: 'phone',
+      header: 'Phone',
+    },
+    {
+      accessorKey: 'address',
+      header: 'Address',
     },
     {
       accessorKey: 'createdAt',
@@ -197,10 +191,10 @@ export default function CategoryPage() {
               <Archive size={24} color="var(--mantine-color-red-6)" />
             </Box>
             <Text c="red" fw={500} fz="lg">
-              Error Loading Categories
+              Error Loading User
             </Text>
             <Text c="gray.6" ta="center" fz="sm">
-              Unable to fetch categories data. Please try again later.
+              Unable to fetch user data. Please try again later.
             </Text>
             <Button variant="light" color="red" onClick={handleRefresh}>
               Try Again
@@ -231,14 +225,14 @@ export default function CategoryPage() {
               <Group gap="xs">
                 <Tag size={16} />
                 <Text fz="sm" opacity={0.9}>
-                  Category Management
+                  Restaurant Management
                 </Text>
               </Group>
               <Title order={1} c="white">
-                Categories
+                Restaurant
               </Title>
               <Text fz="sm" opacity={0.8}>
-                Manage and organize your product categories
+                Manage and organize your Restaurant
               </Text>
             </Stack>
 
@@ -254,10 +248,10 @@ export default function CategoryPage() {
               >
                 <Stack gap={4} align="center">
                   <Text fz="xl" fw={700} c="white">
-                    {categories?.data?.length || 0}
+                    {restaurants?.data?.length || 0}
                   </Text>
                   <Text fz="xs" c="white" opacity={0.8}>
-                    Total Categories
+                    Total Menu
                   </Text>
                 </Stack>
               </Box>
@@ -272,7 +266,7 @@ export default function CategoryPage() {
               <Button
                 variant="light"
                 color="blue"
-                leftSection={<Tag size={16} />}
+                leftSection={<Store size={16} />}
                 onClick={openAddModal}
                 style={{
                   transition: 'all 0.2s ease',
@@ -282,7 +276,7 @@ export default function CategoryPage() {
                   },
                 }}
               >
-                Add Category
+                Add Restaurant
               </Button>
               <Button
                 variant="outline"
@@ -419,21 +413,21 @@ export default function CategoryPage() {
               },
             }}
           >
-            <ReusableTable isLoading={isLoading} data={categories?.data ?? []} columns={columns} />
+            <ReusableTable isLoading={isLoading} data={restaurants?.data ?? []} columns={columns} />
           </Box>
         </Card>
 
         {/* Pagination */}
-        {categories?.meta.totalPage && categories.meta.totalPage > 1 && (
+        {restaurants?.meta.totalPage && restaurants.meta.totalPage > 1 && (
           <Card shadow="sm" padding="md" radius="md" withBorder>
             <Group justify="space-between" align="center">
               <Text fz="sm" c="gray.6">
                 Showing {(page - 1) * limit + 1} to{' '}
-                {Math.min(page * limit, categories.meta.totalData || 0)} of{' '}
-                {categories.meta.totalData || 0} entries
+                {Math.min(page * limit, restaurants.meta.totalData || 0)} of{' '}
+                {restaurants.meta.totalData || 0} entries
               </Text>
               <Pagination
-                total={categories.meta.totalPage}
+                total={restaurants.meta.totalPage}
                 value={page}
                 onChange={setPage}
                 size="sm"
@@ -451,18 +445,25 @@ export default function CategoryPage() {
         )}
       </Container>
 
-      {/* Modals */}
-      <AddModal opened={addModalOpened} onClose={closeAddModal} />
+      {/* <AddModal opened={addModalOpened} onClose={closeAddModal} />
       <UpdateModal
-        initialData={{ name: selectedCategory?.name ?? '', id: selectedCategory?.id ?? 0 }}
-        onClose={closeEditModal}
         opened={editModalOpened}
+        onClose={closeEditModal}
+        initialData={{
+          id: selectedUser?.id || 0,
+          name: '',
+          email: selectedUser?.email || '',
+          username: selectedUser?.username || '',
+          role: selectedUser?.role || 'owner',
+          password: '',
+          restaurantId: 0,
+        }}
       />
       <DeleteModal
-        initialData={{ id: selectedCategory?.id ?? 0 }}
         onClose={closeDeleteModal}
         opened={deleteModalOpened}
-      />
+        initialData={{ id: selectedUser?.id ?? 0 }}
+      /> */}
     </Fragment>
   );
 }

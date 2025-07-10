@@ -1,21 +1,26 @@
 'use client';
-import { RegisterPayload, registerSchema } from '@/schemas/auth/register';
-import { register } from '@/services/auth/register';
+
+import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
   Anchor,
+  Box,
   Button,
   Container,
+  Grid,
+  Image,
   Paper,
   PasswordInput,
+  Stack,
   Text,
   TextInput,
   Title,
 } from '@mantine/core';
-import { notifications } from '@mantine/notifications';
 import { useMutation } from '@tanstack/react-query';
+import { notifications } from '@mantine/notifications';
 import { useRouter } from 'next/navigation';
-import { useForm, Controller } from 'react-hook-form';
+import { registerSchema, RegisterPayload } from '@/schemas/auth/register';
+import { register } from '@/services/auth/register';
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -53,93 +58,131 @@ export default function RegisterPage() {
   };
 
   return (
-    <Container size={'xs'} w={'100%'}>
-      <Title ta="center" fw={900} size="h2">
-        Create an account
-      </Title>
+    <Container w="75%" py="xl">
+      <Paper radius="md" w={'100%'} withBorder shadow="md" p={0}>
+        <Grid gutter={0}>
+          {/* Kiri: Form */}
+          <Grid.Col span={{ base: 12, md: 6 }}>
+            <Box p={{ base: 'lg', md: 'xl' }}>
+              <form onSubmit={form.handleSubmit(onSubmit)}>
+                <Stack gap={'lg'}>
+                  <Box ta="center">
+                    <Title order={2} fw={700}>
+                      Create an account
+                    </Title>
+                    <Text size="sm" c="dimmed">
+                      Create your account to get started
+                    </Text>
+                  </Box>
 
-      <Text c="dark" size="sm" ta="center" mt={5}>
-        Already have an account?{' '}
-        <Anchor size="sm" component="a" href="/login">
-          Login
-        </Anchor>
-      </Text>
+                  <Controller
+                    name="username"
+                    control={form.control}
+                    render={({ field, fieldState }) => (
+                      <TextInput
+                        label="Username"
+                        placeholder="Your username"
+                        radius="md"
+                        size="md"
+                        error={fieldState.error?.message}
+                        {...field}
+                      />
+                    )}
+                  />
 
-      <Paper withBorder shadow="md" p={30} mt={30} radius="md">
-        <form onSubmit={form.handleSubmit(onSubmit)}>
-          <Controller
-            name="username"
-            control={form.control}
-            render={({ field, fieldState }) => (
-              <TextInput
-                label="Username"
-                placeholder="Your username"
+                  <Controller
+                    name="name"
+                    control={form.control}
+                    render={({ field, fieldState }) => (
+                      <TextInput
+                        label="Full Name"
+                        placeholder="Your full name"
+                        radius="md"
+                        size="md"
+                        error={fieldState.error?.message}
+                        {...field}
+                      />
+                    )}
+                  />
+
+                  <Controller
+                    name="email"
+                    control={form.control}
+                    render={({ field, fieldState }) => (
+                      <TextInput
+                        label="Email"
+                        placeholder="you@example.com"
+                        radius="md"
+                        size="md"
+                        error={fieldState.error?.message}
+                        {...field}
+                      />
+                    )}
+                  />
+
+                  <Controller
+                    name="password"
+                    control={form.control}
+                    render={({ field, fieldState }) => (
+                      <PasswordInput
+                        label="Password"
+                        placeholder="Your password"
+                        radius="md"
+                        size="md"
+                        error={fieldState.error?.message}
+                        {...field}
+                      />
+                    )}
+                  />
+
+                  <Button
+                    type="submit"
+                    fullWidth
+                    size="md"
+                    radius="md"
+                    variant="gradient"
+                    gradient={{ from: 'blue', to: 'cyan' }}
+                    loading={isPending}
+                  >
+                    Register
+                  </Button>
+                  <Text size="sm" ta={'center'} c="dimmed">
+                    Already have an account?{' '}
+                    <Anchor href="/login" size="sm">
+                      Login
+                    </Anchor>
+                  </Text>
+                </Stack>
+              </form>
+            </Box>
+          </Grid.Col>
+
+          {/* Kanan: Gambar */}
+          <Grid.Col span={{ base: 0, md: 6 }} visibleFrom="md">
+            <Box h="100%" pos="relative">
+              <Image
+                src="/authimage.jpg"
+                alt="Register illustration"
                 radius="md"
-                size="md"
-                error={fieldState.error?.message}
-                {...field}
+                h="100%"
+                style={{ objectFit: 'cover' }}
               />
-            )}
-          />
-          <Controller
-            name="name"
-            control={form.control}
-            render={({ field, fieldState }) => (
-              <TextInput
-                label="Full Name"
-                placeholder="Your full name"
-                mt="md"
-                radius="md"
-                size="md"
-                error={fieldState.error?.message}
-                {...field}
-              />
-            )}
-          />
-          <Controller
-            name="email"
-            control={form.control}
-            render={({ field, fieldState }) => (
-              <TextInput
-                label="Email"
-                placeholder="your@email.com"
-                mt="md"
-                radius="md"
-                size="md"
-                error={fieldState.error?.message}
-                {...field}
-              />
-            )}
-          />
-          <Controller
-            name="password"
-            control={form.control}
-            render={({ field, fieldState }) => (
-              <PasswordInput
-                label="Password"
-                placeholder="Your password"
-                mt="md"
-                radius="md"
-                size="md"
-                error={fieldState.error?.message}
-                {...field}
-              />
-            )}
-          />
-          <Button
-            type="submit"
-            fullWidth
-            mt="xl"
-            size="md"
-            radius="md"
-            variant="gradient"
-            gradient={{ from: 'blue', to: 'cyan' }}
-            loading={isPending}
-          >
-            Register
-          </Button>
-        </form>
+            </Box>
+          </Grid.Col>
+        </Grid>
       </Paper>
+
+      <Text ta="center" mt="md" size="xs" c="dimmed">
+        By registering, you agree to our{' '}
+        <Anchor href="#" size="xs">
+          Terms of Service
+        </Anchor>{' '}
+        and{' '}
+        <Anchor href="#" size="xs">
+          Privacy Policy
+        </Anchor>
+        .
+      </Text>
     </Container>
   );
 }
