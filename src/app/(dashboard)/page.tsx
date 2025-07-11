@@ -48,9 +48,9 @@ export default function Home() {
               Selamat Datang di Dashboard
             </Title>
 
-            <Text size="lg" style={{ color: '#e0e0e0' }} ta="center">
+            <Box style={{ color: '#e0e0e0', textAlign: 'center', fontSize: '1.125rem' }}>
               Hai, <strong>{profile?.username || 'Guest'}</strong>! Kamu berhasil login.
-            </Text>
+            </Box>
 
             <Divider my="sm" color="gray" />
 
@@ -62,12 +62,12 @@ export default function Home() {
               style={{ backgroundColor: 'rgba(255, 255, 255, 0.1)' }}
             >
               <Group>
-                <Text size="sm" style={{ color: '#ddd' }}>
+                <Box style={{ color: '#ddd', fontSize: '0.875rem' }}>
                   Email
-                </Text>
-                <Text size="sm" fw={500} style={{ color: 'white' }}>
+                </Box>
+                <Box style={{ color: 'white', fontSize: '0.875rem', fontWeight: 500 }}>
                   {profile?.email || 'Tidak tersedia'}
-                </Text>
+                </Box>
               </Group>
             </Paper>
 
@@ -122,12 +122,12 @@ export default function Home() {
                       {item.icon}
                     </Avatar>
                     <Box>
-                      <Text size="sm" style={{ color: '#ccc' }}>
+                      <Box style={{ color: '#ccc', fontSize: '0.875rem' }}>
                         {item.title}
-                      </Text>
-                      <Text size="lg" fw={700} style={{ color: 'white' }}>
+                      </Box>
+                      <Box style={{ color: 'white', fontSize: '1.125rem', fontWeight: 700 }}>
                         {item.value}
-                      </Text>
+                      </Box>
                     </Box>
                   </Group>
                 </Paper>

@@ -245,7 +245,7 @@ export default function MenuPage() {
               >
                 <Stack gap={4} align="center">
                   <Text fz="xl" fw={700} c="white">
-                    {users?.data?.length || 0}
+                    {users?.meta.totalData || 0}
                   </Text>
                   <Text fz="xs" c="white" opacity={0.8}>
                     Total Menu

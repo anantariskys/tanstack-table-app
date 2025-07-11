@@ -248,7 +248,7 @@ export default function RestaurantPage() {
               >
                 <Stack gap={4} align="center">
                   <Text fz="xl" fw={700} c="white">
-                    {restaurants?.data?.length || 0}
+                    {restaurants?.meta.totalData || 0}
                   </Text>
                   <Text fz="xs" c="white" opacity={0.8}>
                     Total Menu

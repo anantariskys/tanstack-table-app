@@ -254,7 +254,7 @@ export default function CategoryPage() {
               >
                 <Stack gap={4} align="center">
                   <Text fz="xl" fw={700} c="white">
-                    {categories?.data?.length || 0}
+                    {categories?.meta.totalData || 0}
                   </Text>
                   <Text fz="xs" c="white" opacity={0.8}>
                     Total Categories
