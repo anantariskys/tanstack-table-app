@@ -49,7 +49,8 @@ export default function MenuPage() {
   const [limit, setLimit] = useState(10);
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState('');
-  const { data: menu, isLoading, error } = useMenus({ limit, page, search });
+  const [isAvailable, setIsAvailable] = useState<undefined | true | false>();
+  const { data: menu, isLoading, error } = useMenus({ limit, page, search, isAvailable });
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [addModalOpened, { open: openAddModal, close: closeAddModal }] = useDisclosure(false);
   const [editModalOpened, { open: openEditModal, close: closeEditModal }] = useDisclosure(false);
@@ -276,7 +277,7 @@ export default function MenuPage() {
               >
                 <Stack gap={4} align="center">
                   <Text fz="xl" fw={700} c="white">
-                    {menu?.meta.totalData|| 0}
+                    {menu?.meta.totalData || 0}
                   </Text>
                   <Text fz="xs" c="white" opacity={0.8}>
                     Total Menu
@@ -294,6 +295,7 @@ export default function MenuPage() {
               <Button
                 variant="light"
                 color="blue"
+                size="md"
                 leftSection={<Utensils size={16} />}
                 onClick={openAddModal}
                 style={{
@@ -308,6 +310,7 @@ export default function MenuPage() {
               </Button>
               <Button
                 variant="outline"
+                size="md"
                 color="gray"
                 leftSection={<FileUp size={16} />}
                 style={{
@@ -343,7 +346,7 @@ export default function MenuPage() {
               <Button
                 variant="outline"
                 color="green"
-                size="sm"
+                size="md"
                 leftSection={<FileDown size={16} />}
                 style={{
                   transition: 'all 0.2s ease',
@@ -370,6 +373,32 @@ export default function MenuPage() {
                 placeholder="Search categories..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
+                styles={{
+                  input: {
+                    borderRadius: '20px',
+                    transition: 'all 0.2s ease',
+                    '&:focus': {
+                      transform: 'scale(1.02)',
+                      boxShadow: '0 0 0 3px rgba(59, 130, 246, 0.1)',
+                    },
+                  },
+                }}
+              />
+              <Select
+                size="sm"
+                w={200}
+                leftSection={<Archive size={16} />}
+                placeholder="Filter by availability"
+                value={isAvailable === undefined ? null : isAvailable.toString()}
+                onChange={(value) => {
+                  setIsAvailable(value === null ? undefined : value === 'true');
+                  setPage(1);
+                }}
+                data={[
+                  { value: 'true', label: 'Available' },
+                  { value: 'false', label: 'Not Available' },
+                ]}
+                clearable
                 styles={{
                   input: {
                     borderRadius: '20px',

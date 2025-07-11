@@ -272,6 +272,7 @@ export default function CategoryPage() {
               <Button
                 variant="light"
                 color="blue"
+                size="md"
                 leftSection={<Tag size={16} />}
                 onClick={openAddModal}
                 style={{
@@ -287,6 +288,7 @@ export default function CategoryPage() {
               <Button
                 variant="outline"
                 color="gray"
+                size="md"
                 leftSection={<FileUp size={16} />}
                 style={{
                   transition: 'all 0.2s ease',
@@ -321,7 +323,7 @@ export default function CategoryPage() {
               <Button
                 variant="outline"
                 color="green"
-                size="sm"
+                size="md"
                 leftSection={<FileDown size={16} />}
                 style={{
                   transition: 'all 0.2s ease',

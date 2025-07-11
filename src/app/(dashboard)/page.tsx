@@ -62,9 +62,7 @@ export default function Home() {
               style={{ backgroundColor: 'rgba(255, 255, 255, 0.1)' }}
             >
               <Group>
-                <Box style={{ color: '#ddd', fontSize: '0.875rem' }}>
-                  Email
-                </Box>
+                <Box style={{ color: '#ddd', fontSize: '0.875rem' }}>Email</Box>
                 <Box style={{ color: 'white', fontSize: '0.875rem', fontWeight: 500 }}>
                   {profile?.email || 'Tidak tersedia'}
                 </Box>
@@ -122,9 +120,7 @@ export default function Home() {
                       {item.icon}
                     </Avatar>
                     <Box>
-                      <Box style={{ color: '#ccc', fontSize: '0.875rem' }}>
-                        {item.title}
-                      </Box>
+                      <Box style={{ color: '#ccc', fontSize: '0.875rem' }}>{item.title}</Box>
                       <Box style={{ color: 'white', fontSize: '1.125rem', fontWeight: 700 }}>
                         {item.value}
                       </Box>
