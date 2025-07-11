@@ -5,3 +5,8 @@ export type QueryParams = Partial<{
   orderBy: string;
   orderDirection: 'ASC' | 'DESC';
 }>;
+
+export type MenuQueryParams = QueryParams &
+  Partial<{
+    isAvailable: boolean;
+  }>;
