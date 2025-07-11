@@ -475,7 +475,7 @@ export default function MenuPage() {
         </Card>
 
         {/* Pagination */}
-        {menu?.meta.totalPage && menu.meta.totalPage > 1 && (
+        { menu?.meta.totalPage && menu.meta.totalPage > 1 && (
           <Card shadow="sm" padding="md" radius="md" withBorder>
             <Group justify="space-between" align="center">
               <Text fz="sm" c="gray.6">

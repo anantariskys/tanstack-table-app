@@ -16,8 +16,9 @@ import {
   Divider,
   Badge,
   Tooltip,
+  useMantineColorScheme,
 } from '@mantine/core';
-import { useDisclosure } from '@mantine/hooks';
+import { useColorScheme, useDisclosure } from '@mantine/hooks';
 import {
   LayoutDashboard,
   Briefcase,
@@ -45,6 +46,7 @@ export default function RootAppLayout({ children }: { children: React.ReactNode 
   const [mobileOpened, { toggle: toggleMobile }] = useDisclosure();
   const [desktopOpened, { toggle: toggleDesktop }] = useDisclosure(true);
   const [hoveredItem, setHoveredItem] = useState<string | null>(null);
+  const { toggleColorScheme } = useMantineColorScheme();
   const profile = useProfile();
 
   const handleLogout = async () => {
@@ -67,15 +69,13 @@ export default function RootAppLayout({ children }: { children: React.ReactNode 
           borderRight: '1px solid var(--mantine-color-gray-2)',
           transition: 'all 0.3s ease',
         },
-        main: {
-          backgroundColor: 'var(--mantine-color-gray-0)',
-        },
+
       }}
     >
       <AppShell.Navbar p={0}>
         {/* Logo Section */}
         <AppShell.Section
-          p="lg"
+          p="md"
           style={{
             borderBottom: '1px solid var(--mantine-color-gray-2)',
             background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
@@ -91,10 +91,12 @@ export default function RootAppLayout({ children }: { children: React.ReactNode 
                   backdropFilter: 'blur(10px)',
                   border: '1px solid rgba(255, 255, 255, 0.3)',
                 }}
+                display='flex'
+                
               >
                 <svg
-                  width="40"
-                  height="28"
+                  width="24"
+                  height="16"
                   viewBox="0 0 70 40"
                   fill="none"
                   xmlns="http://www.w3.org/2000/svg"
