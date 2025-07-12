@@ -4,7 +4,6 @@ import {
   Container,
   Paper,
   Title,
-  Text,
   Stack,
   Group,
   SimpleGrid,
