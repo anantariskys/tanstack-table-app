@@ -1,6 +1,6 @@
 import { Menu } from '@/schemas/menu';
 import { getMenus } from '@/services/menus/getMenus';
-import { MenuQueryParams, QueryParams } from '@/types/core/queryParams';
+import { MenuQueryParams } from '@/types/core/queryParams';
 import { PaginatedResponseType } from '@/types/core/response';
 import { useQuery } from '@tanstack/react-query';
 
