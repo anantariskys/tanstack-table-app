@@ -1,6 +1,5 @@
 'use client';
 
-import AuthIMG from '../../../../public/authimage.jpg';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { loginSchema, LoginPayload } from '@/schemas/auth/login';
