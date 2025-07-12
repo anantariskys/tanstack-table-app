@@ -1,6 +1,6 @@
 import z from 'zod';
 
-const restaurantSchema = z.object({
+export const restaurantSchema = z.object({
   id: z.number(),
   createdAt: z.string().datetime(),
   name: z.string(),
