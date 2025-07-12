@@ -16,9 +16,8 @@ import {
   Divider,
   Badge,
   Tooltip,
-  useMantineColorScheme,
 } from '@mantine/core';
-import { useColorScheme, useDisclosure } from '@mantine/hooks';
+import { useDisclosure } from '@mantine/hooks';
 import {
   LayoutDashboard,
   Briefcase,
@@ -46,7 +45,6 @@ export default function RootAppLayout({ children }: { children: React.ReactNode 
   const [mobileOpened, { toggle: toggleMobile }] = useDisclosure();
   const [desktopOpened, { toggle: toggleDesktop }] = useDisclosure(true);
   const [hoveredItem, setHoveredItem] = useState<string | null>(null);
-  const { toggleColorScheme } = useMantineColorScheme();
   const profile = useProfile();
 
   const handleLogout = async () => {
@@ -69,7 +67,6 @@ export default function RootAppLayout({ children }: { children: React.ReactNode 
           borderRight: '1px solid var(--mantine-color-gray-2)',
           transition: 'all 0.3s ease',
         },
-
       }}
     >
       <AppShell.Navbar p={0}>
@@ -91,8 +88,7 @@ export default function RootAppLayout({ children }: { children: React.ReactNode 
                   backdropFilter: 'blur(10px)',
                   border: '1px solid rgba(255, 255, 255, 0.3)',
                 }}
-                display='flex'
-                
+                display="flex"
               >
                 <svg
                   width="24"
