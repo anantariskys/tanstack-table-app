@@ -1,13 +1,7 @@
 import { Modal, TextInput, Button, Stack, Select, Group } from '@mantine/core';
 import { Controller, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import {
-  CreateUserPayload,
-  createUserSchema,
-  UpdateUserPayload,
-  updateUserSchema,
-  User,
-} from '@/schemas/users/user';
+import { UpdateUserPayload, updateUserSchema } from '@/schemas/users/user';
 import { useSession } from 'next-auth/react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { notifications } from '@mantine/notifications';
