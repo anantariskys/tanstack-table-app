@@ -19,22 +19,18 @@ import {
   Tooltip,
   Paper,
   Box,
-  Flex,
 } from '@mantine/core';
 import { Fragment, useState } from 'react';
 import {
   FileUp,
-  UserPlus,
   FileDown,
   Pencil,
   Trash,
   Search,
   Filter,
   RefreshCw,
-  TrendingUp,
   Calendar,
   Tag,
-  MoreHorizontal,
   Eye,
   Archive,
 } from 'lucide-react';
@@ -46,13 +42,19 @@ import moment from 'moment';
 import { UpdateModal } from '@/components/(dashboard)/category/UpdateModal';
 import { Category } from '@/schemas/categories';
 import { DeleteModal } from '@/components/(dashboard)/category/DeleteModal';
+import { useDebounce } from '@/hooks/useDebounce';
 
 export default function CategoryPage() {
   const [limit, setLimit] = useState(10);
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState('');
+  const debouncedSearch = useDebounce(search, 500);
   const [isRefreshing, setIsRefreshing] = useState(false);
-  const { data: categories, isLoading, error } = useCategories({ limit, page, search });
+  const {
+    data: categories,
+    isLoading,
+    error,
+  } = useCategories({ limit, page, search: debouncedSearch });
   const [addModalOpened, { open: openAddModal, close: closeAddModal }] = useDisclosure(false);
   const [editModalOpened, { open: openEditModal, close: closeEditModal }] = useDisclosure(false);
   const [deleteModalOpened, { open: openDeleteModal, close: closeDeleteModal }] =
@@ -424,18 +426,17 @@ export default function CategoryPage() {
             <ReusableTable isLoading={isLoading} data={categories?.data ?? []} columns={columns} />
           </Box>
         </Card>
-
         {/* Pagination */}
-        {categories?.meta.totalPage && categories.meta.totalPage > 1 && (
+        {Boolean(categories?.meta.totalPage && categories.meta.totalPage > 1) && (
           <Card shadow="sm" padding="md" radius="md" withBorder>
             <Group justify="space-between" align="center">
               <Text fz="sm" c="gray.6">
                 Showing {(page - 1) * limit + 1} to{' '}
-                {Math.min(page * limit, categories.meta.totalData || 0)} of{' '}
-                {categories.meta.totalData || 0} entries
+                {Math.min(page * limit, categories?.meta.totalData || 0)} of{' '}
+                {categories?.meta.totalData || 0} entries
               </Text>
               <Pagination
-                total={categories.meta.totalPage}
+                total={categories?.meta.totalPage || 0}
                 value={page}
                 onChange={setPage}
                 size="sm"

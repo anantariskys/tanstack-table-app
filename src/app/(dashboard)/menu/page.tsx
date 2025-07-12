@@ -4,6 +4,7 @@ import { AddModal } from '@/components/(dashboard)/menu/AddModal';
 import { DeleteModal } from '@/components/(dashboard)/menu/DeleteModal';
 import { UpdateModal } from '@/components/(dashboard)/menu/UpdateModal';
 import { ReusableTable } from '@/components/ReusableTable';
+import { useDebounce } from '@/hooks/useDebounce';
 import { useMenus } from '@/hooks/useMenus';
 import { Menu } from '@/schemas/menu';
 import { moment } from '@/utils/moment';
@@ -40,7 +41,6 @@ import {
   Search,
   Tag,
   Trash,
-  UserPlus,
   Utensils,
 } from 'lucide-react';
 import { Fragment, useState } from 'react';
@@ -49,8 +49,13 @@ export default function MenuPage() {
   const [limit, setLimit] = useState(10);
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState('');
+  const debouncedSearch = useDebounce(search, 500);
   const [isAvailable, setIsAvailable] = useState<undefined | true | false>();
-  const { data: menu, isLoading, error } = useMenus({ limit, page, search, isAvailable });
+  const {
+    data: menu,
+    isLoading,
+    error,
+  } = useMenus({ limit, page, search: debouncedSearch, isAvailable });
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [addModalOpened, { open: openAddModal, close: closeAddModal }] = useDisclosure(false);
   const [editModalOpened, { open: openEditModal, close: closeEditModal }] = useDisclosure(false);
@@ -475,16 +480,16 @@ export default function MenuPage() {
         </Card>
 
         {/* Pagination */}
-        { menu?.meta.totalPage && menu.meta.totalPage > 1 && (
+        {Boolean(menu?.meta.totalPage && menu.meta.totalPage > 1) && (
           <Card shadow="sm" padding="md" radius="md" withBorder>
             <Group justify="space-between" align="center">
               <Text fz="sm" c="gray.6">
                 Showing {(page - 1) * limit + 1} to{' '}
-                {Math.min(page * limit, menu.meta.totalData || 0)} of {menu.meta.totalData || 0}{' '}
+                {Math.min(page * limit, menu?.meta.totalData || 0)} of {menu?.meta.totalData || 0}{' '}
                 entries
               </Text>
               <Pagination
-                total={menu.meta.totalPage}
+                total={menu?.meta.totalPage || 0}
                 value={page}
                 onChange={setPage}
                 size="sm"

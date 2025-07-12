@@ -1,9 +1,7 @@
 'use client';
 
-import { AddModal } from '@/components/(dashboard)/users/AddModal';
-import { DeleteModal } from '@/components/(dashboard)/users/DeleteModal';
-import { UpdateModal } from '@/components/(dashboard)/users/UpdateModal';
 import { ReusableTable } from '@/components/ReusableTable';
+import { useDebounce } from '@/hooks/useDebounce';
 import { useRestaurant } from '@/hooks/useRestaurant';
 import { Restaurant } from '@/schemas/restaurant';
 import { moment } from '@/utils/moment';
@@ -47,8 +45,14 @@ export default function RestaurantPage() {
   const [limit, setLimit] = useState(10);
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState('');
+  const debouncedSearch = useDebounce(search, 500);
   const [isRefreshing, setIsRefreshing] = useState(false);
-  const { data: restaurants, isLoading, error } = useRestaurant({ limit, page, search });
+  const {
+    data: restaurants,
+    isLoading,
+    error,
+  } = useRestaurant({ limit, page, search: debouncedSearch });
+
   const [addModalOpened, { open: openAddModal, close: closeAddModal }] = useDisclosure(false);
   const [editModalOpened, { open: openEditModal, close: closeEditModal }] = useDisclosure(false);
   const [deleteModalOpened, { open: openDeleteModal, close: closeDeleteModal }] =
@@ -420,16 +424,16 @@ export default function RestaurantPage() {
         </Card>
 
         {/* Pagination */}
-        {restaurants?.meta.totalPage && restaurants.meta.totalPage > 1 && (
+        {Boolean(restaurants?.meta.totalPage && restaurants.meta.totalPage > 1) && (
           <Card shadow="sm" padding="md" radius="md" withBorder>
             <Group justify="space-between" align="center">
               <Text fz="sm" c="gray.6">
                 Showing {(page - 1) * limit + 1} to{' '}
-                {Math.min(page * limit, restaurants.meta.totalData || 0)} of{' '}
-                {restaurants.meta.totalData || 0} entries
+                {Math.min(page * limit, restaurants?.meta.totalData || 0)} of{' '}
+                {restaurants?.meta.totalData || 0} entries
               </Text>
               <Pagination
-                total={restaurants.meta.totalPage}
+                total={restaurants?.meta.totalPage || 0}
                 value={page}
                 onChange={setPage}
                 size="sm"
