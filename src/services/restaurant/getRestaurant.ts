@@ -9,16 +9,12 @@ export async function getRestaurant(
 ): Promise<PaginatedResponseType<Restaurant>> {
   const session = await getSession();
 
-  try {
-    const response = await api.get('/restaurant', {
-      headers: {
-        Authorization: `Bearer ${session?.tokens?.accessToken}`,
-      },
-      params,
-    });
+  const response = await api.get('/restaurant', {
+    headers: {
+      Authorization: `Bearer ${session?.tokens?.accessToken}`,
+    },
+    params,
+  });
 
-    return response.data;
-  } catch (error: any) {
-    throw error;
-  }
+  return response.data;
 }
